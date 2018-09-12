@@ -6,14 +6,19 @@ environment:
     - CI_COMPILER: CLANG
     - CI_COMPILER: MSVC
 
-# Install submodules
 install:
+  # Install submodules
   - git submodule update --init
 
-  - dir "C:\Program Files\"
+  # Get gnuplot
+  - ps: Invoke-WebRequest https://fossies.org/windows/misc/gp524-win64-mingw_2.exe -OutFile gp.exe
+  - start /wait gp.exe /VERYSILENT /SUPPRESSMSGBOXES
+  - set PATH="C:\Program Files\gnuplot\bin";%PATH%
 
   - set PATH="C:\Program Files\LLVM\bin";%PATH%
   - clang-cl -v
+
+  - dir "C:\Program Files\gnuplot"
 
 build_script:
   - gradlew.bat build --stacktrace --console=plain -PwithBench
